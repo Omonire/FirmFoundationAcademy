@@ -1,0 +1,100 @@
+<!-- ============================================================
+     SPLASH / PRELOADER
+     Inline (not fetched) so it paints on the very first frame,
+     before Tailwind / Lucide / fonts have loaded. This is what
+     the user sees while assets stream in. Removed by preloader.js.
+     ============================================================ -->
+<div id="splash" role="status" aria-live="polite" aria-label="Loading page">
+    <style>
+        #splash {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            background: #0D2420;
+            font-family: 'Poppins', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+            transition: opacity 0.45s ease, visibility 0.45s ease;
+        }
+        #splash.splash-done {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        #splash .splash-logo {
+            width: 84px;
+            height: 84px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #FACC15;
+            animation: splash-pulse 1.6s ease-in-out infinite;
+        }
+        #splash .splash-fallback {
+            width: 84px;
+            height: 84px;
+            border-radius: 50%;
+            background: #FACC15;
+            display: none;
+        }
+        #splash .splash-title {
+            color: #ffffff;
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            text-align: center;
+            padding: 0 20px;
+        }
+        #splash .splash-title span {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: #FACC15;
+            margin-top: 6px;
+        }
+        #splash .splash-track {
+            width: min(240px, 60vw);
+            height: 4px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.15);
+            overflow: hidden;
+        }
+        #splash .splash-bar {
+            height: 100%;
+            width: 0%;
+            border-radius: 999px;
+            background: #FACC15;
+            transition: width 0.3s ease;
+        }
+        #splash .splash-status {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.75rem;
+            letter-spacing: 0.06em;
+            min-height: 1em;
+        }
+        @keyframes splash-pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50%      { transform: scale(1.07); opacity: 0.85; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            #splash .splash-logo { animation: none; }
+            #splash .splash-bar   { transition: none; }
+        }
+    </style>
+
+    <img class="splash-logo" alt=""
+         src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/ffa.webp">
+    <div class="splash-fallback"></div>
+
+    <p class="splash-title">
+        Firm Foundation
+        <span>Academy</span>
+    </p>
+
+    <div class="splash-track"><div class="splash-bar" id="splash-bar"></div></div>
+    <p class="splash-status" id="splash-status">Loading&hellip;</p>
+</div>

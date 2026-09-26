@@ -1,0 +1,47 @@
+# ============================================================
+# Full-resolution image originals (~190 MB)
+# ============================================================
+# assets/ is a local mirror of the "Firm Foundation images" Supabase
+# bucket. The site never serves these directly - it serves the
+# generated 800x800 thumbnails from assets/thumbs/ instead.
+# Ignore the originals so nobody accidentally commits 190 MB.
+#
+# Note: use "assets/*" (not "assets/") so git still descends into
+# the folder and the !assets/thumbs/ rule below can re-include it.
+
+assets/*
+!assets/thumbs/
+!assets/thumbs/**
+
+# Founder photos ARE served directly by about.html - keep these two.
+!assets/founder1.jpg
+!assets/founder2.jpg
+
+# Gallery thumbnails (7.35 MB) ARE committed on purpose.
+# Each <img> in gallery.html points at the Supabase thumb URL and falls
+# back to the local copy via onerror, so the gallery renders even before
+# the thumbs/ prefix has been uploaded to the bucket.
+# Regenerate + re-upload with gen.bat if the photos ever change.
+
+thumbs-upload/
+
+# ============================================================
+# Local tooling
+# ============================================================
+# One-off image optimisation helpers. Kept out of the repo; none of
+# them are needed to serve the site.
+fix_gallery.ps1
+gen.bat
+gen_thumbs.ps1
+gen_thumbs2.ps1
+fetch_missing.ps1
+
+# ============================================================
+# OS / editor noise
+# ============================================================
+.DS_Store
+Thumbs.db
+desktop.ini
+*.lnk
+.vscode/
+.idea/

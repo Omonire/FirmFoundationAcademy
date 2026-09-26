@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="scroll-smooth js">
 
 <head>
     <meta charset="UTF-8">
@@ -142,10 +142,127 @@
         .whatsapp-float:hover {
             transform: translateY(-5px);
         }
+            /* ===== Preloader safety net =====
+           .reveal starts hidden for the scroll animation. If JS never runs
+           (blocked CDN, JS error, file:// quirks) the page would be blank.
+           html:not(.js) forces everything visible so content always shows. */
+        html:not(.js) .reveal {
+            opacity: 1 !important;
+            transform: none !important;
+        }
+        /* Hide page content until the splash lifts, so users never see a
+           half-styled flash. is-ready is added by preloader.js. */
+        html.js body:not(.is-ready) > *:not(#splash) {
+            visibility: hidden;
+        }
+        html.js body.is-ready > *:not(#splash) {
+            visibility: visible;
+        }
     </style>
 </head>
 
 <body class="font-sans text-gray-600 bg-white antialiased overflow-x-hidden" data-page="gallery">
+<!-- ============================================================
+     SPLASH / PRELOADER
+     Inline (not fetched) so it paints on the very first frame,
+     before Tailwind / Lucide / fonts have loaded. This is what
+     the user sees while assets stream in. Removed by preloader.js.
+     ============================================================ -->
+<div id="splash" role="status" aria-live="polite" aria-label="Loading page">
+    <style>
+        #splash {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            background: #0D2420;
+            font-family: 'Poppins', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+            transition: opacity 0.45s ease, visibility 0.45s ease;
+        }
+        #splash.splash-done {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        #splash .splash-logo {
+            width: 84px;
+            height: 84px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #FACC15;
+            animation: splash-pulse 1.6s ease-in-out infinite;
+        }
+        #splash .splash-fallback {
+            width: 84px;
+            height: 84px;
+            border-radius: 50%;
+            background: #FACC15;
+            display: none;
+        }
+        #splash .splash-title {
+            color: #ffffff;
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            text-align: center;
+            padding: 0 20px;
+        }
+        #splash .splash-title span {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: #FACC15;
+            margin-top: 6px;
+        }
+        #splash .splash-track {
+            width: min(240px, 60vw);
+            height: 4px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.15);
+            overflow: hidden;
+        }
+        #splash .splash-bar {
+            height: 100%;
+            width: 0%;
+            border-radius: 999px;
+            background: #FACC15;
+            transition: width 0.3s ease;
+        }
+        #splash .splash-status {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.75rem;
+            letter-spacing: 0.06em;
+            min-height: 1em;
+        }
+        @keyframes splash-pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50%      { transform: scale(1.07); opacity: 0.85; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            #splash .splash-logo { animation: none; }
+            #splash .splash-bar   { transition: none; }
+        }
+    </style>
+
+    <img class="splash-logo" alt=""
+         src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/ffa.webp">
+    <div class="splash-fallback"></div>
+
+    <p class="splash-title">
+        Firm Foundation
+        <span>Academy</span>
+    </p>
+
+    <div class="splash-track"><div class="splash-bar" id="splash-bar"></div></div>
+    <p class="splash-status" id="splash-status">Loading&hellip;</p>
+</div>
+
 
     <!-- NAVBAR -->
     <div id="header-placeholder"></div>
@@ -172,632 +289,632 @@
 
                 <!-- Photo 1 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo1.webp" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo1.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo1.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo1.webp" loading="eager" fetchpriority="high" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>       
 
                 <!-- Photo 5 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo5.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo5.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo5.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo5.jpg" loading="eager" fetchpriority="high" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
 
                 <!-- Photo 7 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo7.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo7.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo7.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo7.jpg" loading="eager" fetchpriority="high" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
 
                 <!-- Photo 8 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo8.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo8.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo8.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo8.jpg" loading="eager" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
 
                 <!-- Photo 9 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo9.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo9.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo9.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo9.jpg" loading="eager" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
 
                 <!-- Photo 10 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo10.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo10.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo10.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo10.jpg" loading="eager" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
 
                 <!-- Photo 11 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo11.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo11.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo11.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo11.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
 
                 <!-- Photo 12 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo12.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo12.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo12.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo12.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 13 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo13.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo13.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo13.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo13.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 14 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo14.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo14.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo14.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo14.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 15 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo15.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo15.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo15.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo15.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 16 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo16.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo16.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo16.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo16.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 17 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo17.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo17.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo17.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo17.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 18 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo18.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo18.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo18.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo18.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 19 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo19.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo19.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo19.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo19.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 20 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo20.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo20.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo20.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo20.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 21 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo21.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo21.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo21.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo21.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 22 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo22.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo22.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo22.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo22.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 23 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo23.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo23.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo23.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo23.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 24 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo24.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo24.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo24.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo24.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 25 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo25.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo25.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo25.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo25.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 26 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo26.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo26.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo26.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo26.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 27 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo27.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo27.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo27.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo27.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 28 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo28.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo28.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo28.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo28.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 29 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo29.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo29.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo29.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo29.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 30 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo30.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo30.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo30.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo30.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 31 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo31.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo31.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo31.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo31.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 32 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo32.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo32.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo32.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo32.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 33 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo33.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo33.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo33.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo33.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 34 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo34.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo34.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo34.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo34.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 35 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo35.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo35.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo35.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo35.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 36 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo36.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo36.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo36.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo36.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 37 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo37.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo37.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo37.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo37.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 38 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo38.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo38.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo38.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo38.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 39 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo39.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo39.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo39.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo39.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 40 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo40.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo40.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo40.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo40.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 41 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo41.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo41.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo41.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo41.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 42 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo42.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo42.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo42.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo42.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 43 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo43.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo43.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo43.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo43.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 44 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo44.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo44.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo44.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo44.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 45 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo45.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo45.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo45.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo45.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 46 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo46.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo46.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo46.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo46.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 47 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo47.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo47.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo47.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo47.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 48 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo48.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo48.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo48.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo48.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 49 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo49.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo49.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo49.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo49.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 50 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo50.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo50.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo50.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo50.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 51 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo51.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo51.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo51.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo51.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 52 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo52.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo52.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo52.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo52.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 53 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo53.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo53.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo53.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo53.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 54 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo54.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo54.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo54.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo54.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 55 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo55.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo55.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo55.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo55.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 56 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo56.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo56.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo56.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo56.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 57 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo57.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo57.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo57.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo57.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 58 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo58.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo58.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo58.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo58.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 59 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo59.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo59.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo59.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo59.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 60 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo60.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo60.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo60.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo60.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 61 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo61.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo61.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo61.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo61.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 62 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo62.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo62.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo62.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo62.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 63 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo63.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo63.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo63.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo63.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 64 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo64.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo64.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo64.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo64.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 65 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo65.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo65.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo65.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo65.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 66 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo66.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo66.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo66.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo66.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 67 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo67.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo67.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo67.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo67.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 68 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo68.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo68.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo68.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo68.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 69 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo69.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo69.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo69.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo69.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 70 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo70.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo70.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo70.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo70.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 71 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo71.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo71.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo71.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo71.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 72 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo72.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo72.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo72.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo72.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 73 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo73.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo73.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo73.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo73.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 74 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo74.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo74.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo74.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo74.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 75 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo75.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo75.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo75.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo75.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 76 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo76.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo76.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo76.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo76.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 77 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo77.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo77.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo77.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo77.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 78 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo78.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo78.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo78.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo78.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 79 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo79.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo79.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo79.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo79.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 80 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo80.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo80.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo80.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo80.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 81 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo81.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo81.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo81.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo81.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 82 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo82.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo82.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo82.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo82.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 83 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo83.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo83.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo83.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo83.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 84 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo84.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo84.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo84.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo84.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 85 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo85.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo85.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo85.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo85.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 86 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo86.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo86.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo86.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo86.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 87 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo87.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo87.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo87.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo87.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 88 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo88.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo88.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo88.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo88.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 89 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo89.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo89.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo89.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo89.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 90 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo90.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo90.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo90.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo90.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 91 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo91.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo91.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo91.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo91.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 92 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo92.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo92.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo92.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo92.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 93 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo93.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo93.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo93.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo93.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 94 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo94.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo94.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo94.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo94.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 95 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo95.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo95.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo95.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo95.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 96 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo96.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo96.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo96.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo96.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 97 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo97.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo97.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo97.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo97.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 98 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo98.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo98.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo98.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo98.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 99 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo99.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo99.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo99.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo99.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 100 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo100.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo100.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo100.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo100.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 101 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo101.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo101.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo101.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo101.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 102 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo102.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo102.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo102.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo102.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 103 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo103.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo103.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo103.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo103.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 104 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo104.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo104.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo104.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo104.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 105 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo105.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo105.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo105.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo105.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 106 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo106.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo106.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo106.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo106.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 107 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo107.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo107.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo107.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo107.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 108 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo108.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo108.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo108.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo108.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 109 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo109.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo109.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo109.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo109.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 110 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo110.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo110.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo110.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo110.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 111 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo111.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo111.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo111.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo111.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 112 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo112.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo112.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo112.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo112.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 113 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo113.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo113.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo113.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo113.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 114 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo114.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo114.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo114.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo114.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 115 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo115.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo115.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo115.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo115.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 116 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo116.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo116.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo116.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo116.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 117 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo117.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo117.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo117.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo117.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 118 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo118.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo118.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo118.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo118.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 119 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo119.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo119.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo119.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo119.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 120 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo120.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo120.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo120.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo120.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 121 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo121.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo121.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo121.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo121.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 122 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo122.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo122.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo122.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo122.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 123 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo123.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo123.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo123.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo123.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 124 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo124.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo124.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo124.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo124.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 125 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo125.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo125.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo125.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo125.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 126 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo126.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo126.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo126.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo126.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 127 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo127.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo127.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo127.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo127.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 128 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo128.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo128.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo128.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo128.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 129 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo129.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo129.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo129.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo129.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                 
                 <!-- Photo 130 -->
                 <div class="rounded-2xl overflow-hidden aspect-square bg-light">
-                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo130.jpg" alt="" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.src,'')">
+                    <img src="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/thumbs/photo130.jpg" onerror="this.onerror=null;this.src='assets/thumbs/photo130.jpg'" data-full="https://pmdnmmyoomecrycsjwoa.supabase.co/storage/v1/object/public/Firm%20Foundation%20images/photo130.jpg" loading="lazy" alt="" decoding="async" width="800" height="800" class="gallery-img w-full h-full object-cover" onclick="openLightbox(this.dataset.full,this.alt)">
                 </div>
                                                 
             </div>
@@ -918,7 +1035,7 @@ let currentPhotoIndex = 0;
 
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.gallery-img').forEach((img, index) => {
-        galleryPhotos.push({ src: img.src, caption: img.alt });
+        galleryPhotos.push({ src: img.dataset.full || img.src, caption: img.alt });
         img.addEventListener('click', () => { currentPhotoIndex = index; });
     });
 });
@@ -1052,5 +1169,6 @@ window.addEventListener('hashchange', () => {
         */
     </script>
 
+    <script src="preloader.js"></script>
 </body>
 </html>
