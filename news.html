@@ -300,7 +300,7 @@
         mobileMenu.classList.remove('menu-open');
         mobileBtn.classList.remove('open');
         if (window.scrollY <= 40) {
-            setTimeout(() => { if (!isMenuOpen) navbar.classList.remove('solid'); }, 300);
+            navbar.classList.remove('solid');
         }
         if (callback) {
             setTimeout(callback, 300);
@@ -317,7 +317,7 @@
             mobileMenu.classList.remove('menu-open');
             mobileBtn.classList.remove('open');
             if (window.scrollY <= 40) {
-                setTimeout(() => { if (!isMenuOpen) navbar.classList.remove('solid'); }, 300);
+                navbar.classList.remove('solid');
             }
         }
     };
