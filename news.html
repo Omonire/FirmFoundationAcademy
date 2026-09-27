@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="icon" href="ffa.jpg">
+    <link rel="icon" href="ffa.webp">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -317,7 +317,7 @@
             mobileMenu.classList.remove('menu-open');
             mobileBtn.classList.remove('open');
             if (window.scrollY <= 40) {
-                navbar.classList.remove('solid');
+                setTimeout(() => { if (!isMenuOpen) navbar.classList.remove('solid'); }, 350);
             }
         }
     };
