@@ -369,15 +369,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 aiSubmitBtn.disabled = true;
 
                 const systemPrompt = "You are an AI assistant for Firm Foundation Academy located in Benin City, Nigeria. Answer questions politely, concisely, and accurately based on typical school info (Nursery, Primary, and Junior Secondary sections, First Term resumption, inter-house sports, admissions open).";
+
+                // NOTE: this is a placeholder. Supply a real key to enable the
+                // assistant, or move the call behind a server-side proxy.
                 const apiKey = "";
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+                const model = 'gemini-2.5-flash';
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+                const showFallback = (message) => {
+                    aiLoader.classList.add('hidden');
+                    aiResponseText.textContent = message;
+                    aiSubmitBtn.disabled = false;
+                };
+
+                if (!apiKey) {
+                    showFallback("The online assistant isn't available right now. Please chat with us on WhatsApp and we'll answer right away!");
+                    return;
+                }
 
                 const payload = {
                     contents: [{ parts: [{ text: question }] }],
                     systemInstruction: { parts: [{ text: systemPrompt }] }
                 };
 
-                let retries = 3;
+                const retries = 3;
                 let delay = 1000;
 
                 for (let i = 0; i < retries; i++) {
@@ -388,25 +403,31 @@ document.addEventListener('DOMContentLoaded', () => {
                             body: JSON.stringify(payload)
                         });
 
+                        if (!response.ok) {
+                            // 4xx will not improve on retry; only back off on
+                            // rate limits and server errors.
+                            if (response.status < 500 && response.status !== 429) break;
+                            throw new Error('HTTP ' + response.status);
+                        }
+
                         const result = await response.json();
                         const candidate = result.candidates?.[0];
 
                         if (candidate && candidate.content?.parts?.[0]?.text) {
-                            aiLoader.classList.add('hidden');
+                            showFallback('');
                             aiResponseText.textContent = candidate.content.parts[0].text;
-                            aiSubmitBtn.disabled = false;
                             return;
                         }
+                        break;   // no usable content; retrying will not help
                     } catch (err) {
-                        // Exponential backoff retry
-                        await new Promise(res => setTimeout(res, delay));
-                        delay *= 2;
+                        if (i < retries - 1) {
+                            await new Promise(res => setTimeout(res, delay));
+                            delay *= 2;
+                        }
                     }
                 }
 
-                aiLoader.classList.add('hidden');
-                aiResponseText.textContent = "I'm sorry, I couldn't process your request right now. Please try again or chat with us on WhatsApp!";
-                aiSubmitBtn.disabled = false;
+                showFallback("I'm sorry, I couldn't process your request right now. Please try again or chat with us on WhatsApp!");
             };
 
             aiSubmitBtn.addEventListener('click', () => {
